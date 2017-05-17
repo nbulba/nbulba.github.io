@@ -1,0 +1,93 @@
+<!doctype html>
+<html>
+
+  <head lang="en">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="custom.css" </head>
+
+    <body>
+      <div class="container">
+        <div class="row">
+          <div class="col-md-6 col-md-offset-3">
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <h3 class="panel-title">Регистрация</h3>
+              </div>
+              <div class="panel-body">
+                <div class="form-group">
+                  <div class="input-group col-xs-12">
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-user"></span></span>
+                    <input type="password" class="form-control" placeholder="Email" />
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <div class="input-group">
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-lock"></span></span>
+                    <input type="password" class="form-control" placeholder="Пароль" />
+                  </div>
+                </div>
+
+                <div class="panel panel-default form-horizontal">
+                  <div class="panel-heading">
+                    <h3 class="panel-title">ФИО</h3>
+                  </div>
+                  <div class="panel-body">
+                    <div class="form-group">
+                      <label for="lastName" class="col-xs-2 control-label">Фамилия</label>
+                      <div class="col-xs-10">
+                        <input type="text" class="form-control" id="lastName" placeholder="Пушкин">
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label for="lastName" class="col-xs-2 control-label">Имя</label>
+                      <div class="col-xs-10">
+                        <input type="text" class="form-control" id="lastName" placeholder="Александр">
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label for="patronymic" class="col-xs-2 control-label">Отчество</label>
+                      <div class="col-xs-10">
+                        <input type="text" class="form-control" id="patronymic" placeholder="Сергеевич">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="panel panel-default form-horizontal">
+                  <div class="panel-heading">
+                    <h3 class="panel-title">Контактные данные</h3>
+                  </div>
+                  <div class="panel-body">
+                    <div class="form-group">
+                      <label for="phoneNumberMain" class="col-xs-4 control-label">Телефон (основной)</label>
+                      <div class="col-xs-8">
+                        <input type="tel" class="form-control" id="phoneNumberMain" placeholder="(900) 123-45-67">
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label for="phoneNumberExtra" class="col-xs-4 control-label">Телефон (второй)</label>
+                      <div class="col-xs-8">
+                        <input type="tel" class="form-control" id="phoneNumberExtra" placeholder="(900) 123-45-67">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="checkbox">
+                  <label>
+                    <input type="checkbox" name="acceptAgreement" value="acceptAgreement"  />Согласен с условиями обслуживания
+                  </label>
+                </div>
+                <input class="btn btn-success pull-right" type="submit" value="Зарегистрироваться" />
+
+              </div>
+            </div>
+          </div>
+        </div>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    </body>
+
+</html>
