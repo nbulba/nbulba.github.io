@@ -252,7 +252,7 @@
         var elDay = 3.87  * $('#ElectricityDayDiff').val();
         var elNight = 3.87  * $('#ElectricityNightDiff').val();
 
-        $('#Total').val((heating + maintaining + commonElectricity + coldWater + coldWaterHot + heatUp + outWater + elDay + elNight) * coeff);
+        $('#Total').val((heating + maintaining + commonElectricity) * coeff + coldWater + coldWaterHot + heatUp + outWater + elDay + elNight);
       }
 
       calc();
