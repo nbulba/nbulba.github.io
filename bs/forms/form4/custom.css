@@ -1,0 +1,33 @@
+body {
+  background-color: rgb(253, 255, 232);
+  padding: 10px;
+}
+
+form.panel {
+  margin-top: 20px;
+  background-color: rgb(205, 235, 197);
+}
+
+form > * {
+  margin-bottom: 10px !important;
+}
+
+label > input[type='radio'] {
+  visibility: hidden;
+  position: absolute;
+}
+
+label > input[type='radio'] + img {
+  cursor: pointer;
+  border: 2px solid transparent;
+}
+
+label > input[type='radio']:hover + img {
+  cursor: pointer;
+  border: 2px solid gray;
+}
+
+label > input[type='radio']:checked + img {
+  cursor: pointer;
+  border: 2px solid coral;
+}
