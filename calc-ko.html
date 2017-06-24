@@ -1,0 +1,267 @@
+<!doctype html>
+<html>
+
+  <head lang="ru">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="custom.css" </head>
+
+    <body style="padding: 10px;">
+      <h1>Калькулятор коммуналки</h1>
+      <h3><strong style="text-transform:capitalize;" data-bind="text: monthName"></strong></h3>
+      <form>
+        <div class="form-group">
+          <label for="exampleInputEmail1">Сколько дней</label>
+          <input type="text" class="form-control" id="CountDays" placeholder="Количество дней" data-bind="value: days">
+        </div>
+        <div class="form-group">
+          <label for="exampleInputEmail1">Из скольки дней</label>
+          <input type="text" class="form-control" id="TotalDays" placeholder="Количество дней" data-bind="value: daysInMonth">
+        </div>
+        <div class="panel panel-default">
+          <div class="panel-heading">В месяц постоянно</div>
+          <div class="panel-body">
+            <table class="table">
+              <tr>
+                <th>
+                  Что
+                </th>
+                <th>
+                  Сколько
+                </th>
+              </tr>
+              <tr>
+                <td>
+                  Отопление
+                </td>
+                <td>
+                  <input type="text" class="form-control" id="Heating" data-bind="value: heating">
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  Содержание и ремонт
+                </td>
+                <td>
+                  <input type="text" class="form-control" id="Maintaining" data-bind="value: maintainance">
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  Электроснабжение ОДН
+                </td>
+                <td>
+                  <input type="text" class="form-control" id="CommonElectricity" data-bind="value: commonElectricity">
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  Холодное водоснабжение ОДН
+                </td>
+                <td>
+                  <input type="text" class="form-control" data-bind="value: commonColdWater">
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  Горячее водоснабжение ОДН
+                </td>
+                <td>
+                  <input type="text" class="form-control" data-bind="value: commonHotWater">
+                </td>
+              </tr>
+            </table>
+          </div>
+        </div>
+
+        <div class="panel panel-default">
+          <div class="panel-heading">В месяц переменные</div>
+          <div class="panel-body">
+            <table class="table">
+              <tr>
+                <th>
+                  Что
+                </th>
+                <th>
+                  Тариф
+                </th>
+                <th>
+                  Было
+                </th>
+                <th>
+                  Стало
+                </th>
+                <th>
+                  Разница
+                </th>
+              </tr>
+              <tr>
+                <td>
+                  Холодное водоснабжение
+                </td>
+                <td data-bind="html: fees.coldWater">
+                </td>
+                <td>
+                  <input type="text" class="form-control" id="ColdWaterPrevious" data-bind="value: coldWaterPrevious">
+                </td>
+                <td>
+                  <input type="text" class="form-control" id="ColdWaterNow" data-bind="value: coldWaterNow">
+                </td>
+                <td>
+                  <input type="text" class="form-control" id="ColdWaterDiff" data-bind="value: coldWaterDiff" readonly="readonly">
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  Холодное водоснабжение для ГВС
+                </td>
+                <td data-bind="html: fees.hotWater">
+                </td>
+                <td>
+                  <input type="text" class="form-control" id="HotWaterPrevious" data-bind="value: hotWaterPrevious">
+                </td>
+                <td>
+                  <input type="text" class="form-control" id="HotWaterNow" data-bind="value: hotWaterNow">
+                </td>
+                <td>
+                  <input type="text" class="form-control" id="HotWaterDiff" data-bind="value: hotWaterDiff" readonly="readonly">
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  Подогрев
+                </td>
+                <td data-bind="text: heatingUp">
+                </td>
+                <td>
+
+                </td>
+                <td>
+
+                </td>
+                <td>
+                  <input type="text" class="form-control" value="0" readonly="readonly">
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  Водоотведение
+                </td>
+                <td data-bind="text: waterOut">
+                </td>
+                <td>
+
+                </td>
+                <td>
+
+                </td>
+                <td>
+                  <input type="text" class="form-control" id="WaterOutDiff" value="0" readonly="readonly">
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  Электроснабжение: день
+                </td>
+                <td data-bind="text: fees.electricityDay">
+                </td>
+                <td>
+                  <input type="text" class="form-control" id="ElectricityDayPrevious" data-bind="value: electricityDayPrevious">
+                </td>
+                <td>
+                  <input type="text" class="form-control" id="ElectricityDayNow" data-bind="value: electricityDayNow">
+                </td>
+                <td>
+                  <input type="text" class="form-control" id="ElectricityDayDiff" data-bind="value: electricityDayDiff" readonly="readonly">
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  Электроснабжение: ночь
+                </td>
+                <td data-bind="text: fees.electricityNight">
+                </td>
+                <td>
+                  <input type="text" class="form-control" id="ElectricityNightPrevious" data-bind="value: electricityNightPrevious">
+                </td>
+                <td>
+                  <input type="text" class="form-control" id="ElectricityNightNow" data-bind="value: electricityNightNow">
+                </td>
+                <td>
+                  <input type="text" class="form-control" id="ElectricityNightDiff" data-bind="value: electricityNightDiff" readonly="readonly">
+                </td>
+              </tr>
+            </table>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="exampleInputEmail1">Сумма всего</label>
+          <input type="text" class="form-control" id="Total" data-bind="value: total">
+        </div>
+      </form>
+      <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+      <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.2/knockout-min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/locale/ru.js"></script>
+      <script>
+      moment.locale('ru');
+        function ViewModel() {
+          var now = moment();
+          this.monthName = ko.observable(now.format('MMM YYYY'));
+          this.fees = {
+            coldWater: ko.observable(34.57),
+            hotWater: ko.observable(34.57),
+            electricityDay: ko.observable(3.87),
+            electricityNight: ko.observable(1.37),
+          };
+          this.days = ko.observable(now.date());
+          this.daysInMonth = ko.observable(now.daysInMonth());
+          this.heating = ko.observable(1063.14);
+          this.maintainance = ko.observable(1179.68);
+          this.commonElectricity = ko.observable(95.53);
+          this.commonColdWater = ko.observable(2.04);
+          this.commonHotWater = ko.observable(9.25);
+          this.coldWaterPrevious = ko.observable(15.92);
+          this.coldWaterNow = ko.observable(15.92);
+          this.coldWaterDiff = ko.computed(function() {
+            return this.coldWaterNow() - this.coldWaterPrevious();
+          }, this);
+          this.hotWaterPrevious = ko.observable(15.92);
+          this.hotWaterNow = ko.observable(15.92);
+          this.hotWaterDiff = ko.computed(function() {
+            return this.hotWaterNow() - this.hotWaterPrevious();
+          }, this);
+          this.heatingUp = ko.observable(121.83);
+          this.waterOut = ko.observable(29.24);
+          this.electricityDayPrevious = ko.observable(177.40);
+          this.electricityDayNow = ko.observable(177.40);
+          this.electricityDayDiff = ko.computed(function() {
+            return this.electricityDayNow() - this.electricityDayPrevious();
+          }, this);
+          this.electricityNightPrevious = ko.observable(35.78);
+          this.electricityNightNow = ko.observable(35.78);
+          this.electricityNightDiff = ko.computed(function() {
+            return this.electricityNightNow() - this.electricityNightPrevious();
+          }, this);
+          this.coefficient = ko.computed(function() {
+            return this.days() / this.daysInMonth();
+          }, this);
+          this.total = ko.computed(function() {
+            return this.coefficient() * (this.heating() + this.maintainance() + this.commonElectricity() + this.commonColdWater() + this.commonHotWater()) +
+              this.fees.coldWater() * this.coldWaterDiff() +
+              this.fees.hotWater() * this.hotWaterDiff() +
+              this.heatingUp() * this.hotWaterDiff() +
+              this.waterOut() * (this.hotWaterDiff() + this.coldWaterDiff()) +
+              this.fees.electricityDay() * this.electricityDayDiff() +
+              this.fees.electricityNight() * this.electricityNightDiff();
+          }, this);
+        }
+
+        ko.applyBindings(new ViewModel());
+      </script>
+    </body>
+
+</html>
