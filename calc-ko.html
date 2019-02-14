@@ -209,13 +209,13 @@
       <script>
       moment.locale('ru');
         function ViewModel() {
-          var now = moment();
+          var now = moment('2018-07-01');
           this.monthName = ko.observable(now.format('MMM YYYY'));
           this.fees = {
-            coldWater: ko.observable(34.57),
-            hotWater: ko.observable(34.57),
-            electricityDay: ko.observable(3.87),
-            electricityNight: ko.observable(1.37),
+            coldWater: ko.observable(37.54),
+            hotWater: ko.observable(37.54),
+            electricityDay: ko.observable(4.26),
+            electricityNight: ko.observable(1.58),
           };
           this.days = ko.observable(now.date());
           this.daysInMonth = ko.observable(now.daysInMonth());
@@ -234,8 +234,8 @@
           this.hotWaterDiff = ko.computed(function() {
             return this.hotWaterNow() - this.hotWaterPrevious();
           }, this);
-          this.heatingUp = ko.observable(121.83);
-          this.waterOut = ko.observable(29.24);
+          this.heatingUp = ko.observable(130.56);
+          this.waterOut = ko.observable(31.86);
           this.electricityDayPrevious = ko.observable(177.40);
           this.electricityDayNow = ko.observable(177.40);
           this.electricityDayDiff = ko.computed(function() {

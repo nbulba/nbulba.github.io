@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html class="no-js">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Фразогенератор</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://fonts.googleapis.com/css?family=Yanone+Kaffeesatz|Ubuntu" rel="stylesheet">
+    <style>
+        html,
+        body {
+            background-color: #F9F7F3;
+            font-family: 'Yanone Kaffeesatz', sans-serif;
+        }
+
+        .clause-container {
+            min-height: 100px;
+            width: 50%;
+            background-color: #EDDEA4;
+            color: #0FA3B1;
+            margin: 20px auto;
+            text-align: center;
+            font-size: 20pt;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .clause {
+            letter-spacing: 1px;
+        }
+
+        .gen {
+            margin: 0 auto;
+        }
+
+        .control {
+            display: flex;
+            justify-content: center;
+        }
+        
+        .btn {
+            margin-right: 2em;
+            border-radius: 4px;
+            border: 1px solid black;
+            background-color: white;
+            color: black;
+        }
+        
+        .btn-wrong {
+            padding: 1em;
+        }
+
+        .x {
+            border-bottom: 8px solid #F7A072;
+        }
+
+        .wrong-container {
+            color: #0FA3B1;
+            font-size: 20pt;
+        }
+
+        .clause-part {
+            margin-right: .5rem;
+        }
+        .clause-part.clause-part-hint {
+            border-bottom: 4px solid #F7A072;
+        }
+
+        .xx{
+            padding: 2rem;
+        }
+
+        .btn-gen {
+            padding: 1rem;
+            font-size: 18pt;
+            font-family: Ubuntu, sans-serif;
+            border-color: #4CAF50;
+            color: green;
+            }
+            
+        .btn-gen:hover {
+              background-color: #4CAF50;
+  color: white;
+  cursor: pointer;
+        }
+        
+        .danger {
+  border-color: #f44336;
+  color: red
+}
+
+.danger:hover {
+  background: #f44336;
+  color: white;
+  cursor: pointer;
+}
+
+h1 {
+text-align: center;
+}
+
+.word-hint {
+overflow: hidden;
+}
+
+.word-hint--collapsed {
+	display: none;
+}
+
+.clause-part {
+	display: inline-block;
+}
+        
+    </style>
+</head>
+
+<body>
+	<h1>Простое прошедшее время (вчера)</h1>
+    <div class="clause-container">
+        <div class="clause"></div>
+    </div>
+
+    <div class="control xx">
+        <input type="checkbox" id="showhint" /><label for="showhint">Показать информацию</label>
+    </div>
+
+    <div class="control">
+        <button class="btn btn-gen">Следующее</button>
+        <button class="btn btn-wrong danger">Что-то не то</button>
+    </div>
+
+    <div class="wrong-container" style="display:none">
+        <h2>Совсем неправильные фразы</h2>
+        <ul></ul>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+        crossorigin="anonymous"></script>
+    <script>
+
+        var pronouns = [
+		{ word: 'yo', meaning: 'я' },
+		{ word: 'tú', meaning: 'ты' },
+		{ word: 'nosotros', meaning: 'мы' },
+		{ word: 'vosotros', meaning: 'вы' },
+		{ word: 'él', meaning: 'он' },
+		{ word: 'ella', meaning: 'она' },
+		{ word: 'ellos, ellas', meaning: 'они' }
+        ]
+
+        var verbishes = [
+			{ word: 'abandonar', meaning: 'покинуть' },
+			{ word: 'abandonar los estudios', meaning: 'бросить учёбу (занятия)' },
+			{ word: 'abrir', meaning: 'открыть' },
+			{ word: 'acabar', meaning: 'заканчивать' },
+			{ word: 'acabar', meaning: 'заканчивать' },
+			{ word: 'acabar la carrera', meaning: 'получить диплом' },
+			{ word: 'aceptar', meaning: 'принять' },
+			{ word: 'acercarse', meaning: 'подходить' },
+			{ word: 'acompañar', meaning: 'провожать' },
+			{ word: 'aconsejar', meaning: 'советовать' },
+			{ word: 'acordarse', meaning: 'помнить, вспоминать' },
+			{ word: 'acordarse', meaning: 'помнить' },
+			{ word: 'acostarse', meaning: 'ложиться спать' },
+			{ word: 'acostarse', meaning: 'ложиться спать' },
+			{ word: 'andar', meaning: 'ходить' },
+			{ word: 'apagar', meaning: 'гасить' },
+			{ word: 'aparecer', meaning: 'появиться' },
+			{ word: 'apetecer', meaning: 'хотеться' },
+			{ word: 'apoyar', meaning: 'поддерживать (морально человека/идею)' },
+			{ word: 'aprender', meaning: 'выучить' },
+			{ word: 'aprender a', meaning: 'учиться чему-то' },
+			{ word: 'apuntar', meaning: 'записывать' },
+			{ word: 'arreglar', meaning: 'приводить в порядок, чинить' },
+			{ word: 'arreglar (el) coche', meaning: 'чинить машину' },
+			{ word: 'asomarse', meaning: 'появляться' },
+			{ word: 'atreverse', meaning: 'отваживаться' },
+			{ word: 'atropellar', meaning: 'наехать' },
+			{ word: 'avisar', meaning: 'предупредить, известить' },
+			{ word: 'ayudar (a + verbo)', meaning: 'помогать (в ч/л)' },
+			{ word: 'bailar', meaning: 'танцевать' },
+			{ word: 'bajar', meaning: 'спускаться, выходить (из транспортного средства)' },
+			{ word: 'bajar', meaning: 'спускать, спускаться' },
+			{ word: 'bañar', meaning: 'купать' },
+			{ word: 'bañarse', meaning: 'купаться' },
+			{ word: 'besar', meaning: 'целовать' },
+			{ word: 'buscar', meaning: 'искать' },
+			{ word: 'caer', meaning: 'падать' },
+			{ word: 'callar', meaning: 'молчать' },
+			{ word: 'cambiar', meaning: 'менять, меняться' },
+			{ word: 'cantar', meaning: 'петь' },
+			{ word: 'cargar', meaning: 'нагружать' },
+			{ word: 'casar', meaning: 'женить' },
+			{ word: 'casarse', meaning: 'жениться' },
+			{ word: 'causar impresión', meaning: 'произвести впечатление' },
+			{ word: 'celebrar', meaning: 'праздновать' },
+			{ word: 'cenar', meaning: 'ужинать' },
+			{ word: 'cerrar', meaning: 'закрывать' },
+			{ word: 'cobrar', meaning: 'получать деньги (налоги, зп)' },
+			{ word: 'cocinar', meaning: 'готовить (еду)' },
+			{ word: 'coger', meaning: 'брать, схватить, садиться в транспорт' },
+			{ word: 'coger el metro', meaning: 'сесть на метро' },
+			{ word: 'colgar', meaning: 'вешать' },
+			{ word: 'comer', meaning: 'есть (кушать)' },
+			{ word: 'completar', meaning: 'заполнять' },
+			{ word: 'comprar', meaning: 'покупать' },
+			{ word: 'comprender', meaning: 'понимать' },
+			{ word: 'concentrarse', meaning: '(с)концентрироваться' },
+			{ word: 'conducir', meaning: 'водить машину' },
+			{ word: 'confesar', meaning: 'признать, сознаться' },
+			{ word: 'conseguir', meaning: 'доставать, добиваться' },
+			{ word: 'conservar', meaning: 'сохранять' },
+			{ word: 'contar', meaning: 'считать' },
+			{ word: 'contar', meaning: 'считать, рассказывать' },
+			{ word: 'contestar', meaning: 'отвечать' },
+			{ word: 'continuar', meaning: 'продолжить' },
+			{ word: 'convertirse', meaning: 'превращаться' },
+			{ word: 'correr', meaning: 'бегать' },
+			{ word: 'costar', meaning: 'стоить' },
+			{ word: 'crecer', meaning: 'расти' },
+			{ word: 'creer', meaning: 'думать, верить' },
+			{ word: 'cruzar', meaning: 'пересекать' },
+			{ word: 'cuidar', meaning: 'заботиться' },
+			{ word: 'dar', meaning: 'давать' },
+			{ word: 'darse cuenta', meaning: 'осознавать, замечать' },
+			{ word: 'deber', meaning: 'быть должным' },
+			{ word: 'decidir', meaning: 'решать (сделать ч/л)' },
+			{ word: 'dedicar', meaning: 'посвящать' },
+			{ word: 'dejar', meaning: 'оставлять' },
+			{ word: 'dejar en paz', meaning: 'оставить в покое' },
+			{ word: 'desaparecer', meaning: 'исчезать' },
+			{ word: 'desayunar', meaning: 'завтракать' },
+			{ word: 'descansar', meaning: 'отдыхать' },
+			{ word: 'descubrir', meaning: 'обнаружить' },
+			{ word: 'desempeñar', meaning: 'исполнять обязанности (выполнять работу)' },
+			{ word: 'despertar', meaning: 'будить' },
+			{ word: 'despertar', meaning: 'пробудить, разбудить' },
+			{ word: 'despertarse', meaning: 'просыпаться' },
+			{ word: 'despistarse', meaning: 'быть рассеянным' },
+			{ word: 'destruir', meaning: 'разрушать' },
+			{ word: 'detener', meaning: 'останавливать(ся), арестовывать' },
+			{ word: 'detenerse', meaning: 'задерживаться, останавливаться' },
+			{ word: 'devolver', meaning: 'возвращать' },
+			{ word: 'digo', meaning: 'говорю' },
+			{ word: 'dirigir', meaning: 'направить' },
+			{ word: 'discutir', meaning: 'спорить, обсуждать' },
+			{ word: 'disminuir', meaning: 'уменьшать, уменьшаться' },
+			{ word: 'dormir', meaning: 'спать' },
+			{ word: 'doy', meaning: 'даю' },
+			{ word: 'ducharse', meaning: 'принимать душ' },
+			{ word: 'duermen', meaning: 'спят' },
+			{ word: 'durar', meaning: 'длиться, продолжаться' },
+			{ word: 'echar', meaning: 'бросать, испускать' },
+			{ word: 'elaborar', meaning: 'готовить, производить' },
+			{ word: 'elegir', meaning: 'выбирать (осознанно, т.ж. кандидата на выборах)' },
+			{ word: 'empaquetar', meaning: 'упаковать' },
+			{ word: 'empezar', meaning: 'начинать(ся)' },
+			{ word: 'enamorarse (de)', meaning: 'влюбиться' },
+			{ word: 'encantar', meaning: 'очень нравиться' },
+			{ word: 'encargarse (de)', meaning: 'заниматься (к/л работой, заданием)' },
+			{ word: 'encender', meaning: 'включать, зажигать' },
+			{ word: 'encontrar', meaning: 'найти' },
+			{ word: 'encontrar', meaning: 'находить' },
+			{ word: 'enfadarse', meaning: 'сердиться, злиться' },
+			{ word: 'enfadarse', meaning: 'сердиться, злиться' },
+			{ word: 'enseñar', meaning: 'показывать' },
+			{ word: 'entender', meaning: 'понимать' },
+			{ word: 'enterarse', meaning: 'узнавать (информацию)' },
+			{ word: 'entretener', meaning: 'задерживать, развлекать' },
+			{ word: 'enviar', meaning: 'посылать' },
+			{ word: 'equivocarse', meaning: 'ошибаться' },
+			{ word: 'escoger', meaning: 'выбирать' },
+			{ word: 'escribir', meaning: 'писать' },
+			{ word: 'escuchar', meaning: 'слушать' },
+			{ word: 'esperar', meaning: 'ждать' },
+			{ word: 'esperar', meaning: 'ждать' },
+			{ word: 'esquiar', meaning: 'кататься на лыжах' },
+			{ word: 'esquiar', meaning: 'кататься на лыжах' },
+			{ word: 'estar con gripe', meaning: 'болеть гриппом (через быть)' },
+			{ word: 'estás de broma', meaning: 'ты шутишь' },
+			{ word: 'estropear', meaning: 'портить, ломать' },
+			{ word: 'estudiar', meaning: 'учиться' },
+			{ word: 'evitar', meaning: 'избегать' },
+			{ word: 'excitar', meaning: 'волновать' },
+			{ word: 'explicar', meaning: 'объяснить' },
+			{ word: 'filmar', meaning: 'снимать фильм' },
+			{ word: 'formar', meaning: 'образовывать, составлять' },
+			{ word: 'fregar', meaning: 'мыть (посуду, пол)' },
+			{ word: 'fue', meaning: 'был' },
+			{ word: 'fumar', meaning: 'курить' },
+			{ word: 'funcionar', meaning: 'работать (о вещах)' },
+			{ word: 'fundar', meaning: 'основать' },
+			{ word: 'ganar', meaning: 'зарабатывать' },
+			{ word: 'gastar', meaning: 'тратить' },
+			{ word: 'gesticular', meaning: 'жестикулировать' },
+			{ word: 'girar', meaning: 'повернуть' },
+			{ word: 'gritar', meaning: 'кричать' },
+			{ word: 'guardar', meaning: 'хранить, прятать, убирать (в сумку, например)' },
+			{ word: 'gustar', meaning: 'нравиться' },
+			{ word: 'hablar', meaning: 'говорить' },
+			{ word: 'hacer', meaning: 'делать' },
+			{ word: 'hacer (el) examen', meaning: 'сдавать экзамен' },
+			{ word: 'hacer caso', meaning: 'обращать внимание' },
+			{ word: 'hacer gimnasia', meaning: 'делать упражнения (зарядка)' },
+			{ word: 'hacer limpieza', meaning: 'убираться' },
+			{ word: 'hacer limpieza', meaning: 'делать уборку (убираться, прибираться в квартире, доме)' },
+			{ word: 'hacer ruido', meaning: 'шуметь' },
+			{ word: 'hacer una reserva', meaning: '(за)резервировать (в несколько слов)' },
+			{ word: 'hago', meaning: 'делаю' },
+			{ word: 'hay', meaning: 'имеется' },
+			{ word: 'incendiar', meaning: 'поджигать' },
+			{ word: 'influir (en algo/álguien)', meaning: 'влиять (оказывать влияние) (на)' },
+			{ word: 'insistir', meaning: 'настаивать' },
+			{ word: 'instalarse', meaning: 'устраиваться' },
+			{ word: 'intentar', meaning: 'пытаться' },
+			{ word: 'invitar', meaning: 'приглашать' },
+			{ word: 'ir', meaning: 'идти, ехать' },
+			{ word: 'ir', meaning: 'идти' },
+			{ word: 'ir a buscar', meaning: 'встречать заходить' },
+			{ word: 'ir corriendo', meaning: 'спешить (идти быстрым шагом)' },
+			{ word: 'irse', meaning: 'уходить' },
+			{ word: 'irse de vacaciones', meaning: 'идти в отпуск' },
+			{ word: 'jubilarse', meaning: 'уходить на пенсию' },
+			{ word: 'jugar', meaning: 'играть (игры)' },
+			{ word: 'juntar', meaning: 'собирать' },
+			{ word: 'laval (la) ropa', meaning: 'стирать одежду' },
+			{ word: 'lavar', meaning: 'мыть, стирать (одежду)' },
+			{ word: 'lavar', meaning: 'мыть' },
+			{ word: 'lavar (la) ropa', meaning: 'стирать одежду' },
+			{ word: 'lavarse', meaning: 'мыться' },
+			{ word: 'leer', meaning: 'читать' },
+			{ word: 'leer', meaning: 'читать' },
+			{ word: 'levantar', meaning: 'поднимать' },
+			{ word: 'levantarse', meaning: 'подниматься' },
+			{ word: 'llamar', meaning: 'звонить' },
+			{ word: 'llegar', meaning: 'приходить, приезжать' },
+			{ word: 'llegar a tiempo', meaning: 'приходить вовремя' },
+			{ word: 'llegar tarde', meaning: 'опоздать' },
+			{ word: 'llego', meaning: 'прихожу' },
+			{ word: 'llevar', meaning: 'носить, относить' },
+			{ word: 'llevar', meaning: 'носить (одежду)' },
+			{ word: 'llover', meaning: 'дождить' },
+			{ word: 'llueve', meaning: 'идет дождь' },
+			{ word: 'localizar', meaning: 'застать' },
+			{ word: 'mandar', meaning: 'посылать, приказывать' },
+			{ word: 'matar', meaning: 'убивать' },
+			{ word: 'me acuesto', meaning: 'я ложусь спать' },
+			{ word: 'me afeito', meaning: 'бреюсь' },
+			{ word: 'me apetece', meaning: 'мне хочется' },
+			{ word: 'me ducho', meaning: 'принимаю душ' },
+			{ word: 'me levanto', meaning: 'встаю' },
+			{ word: 'me temo', meaning: 'боюсь (опасаюсь)' },
+			{ word: 'medir', meaning: 'иметь рост' },
+			{ word: 'meter', meaning: 'класть, помещать (внутрь ч/л)' },
+			{ word: 'mezclar', meaning: 'смешивать' },
+			{ word: 'mirar', meaning: 'смотреть на' },
+			{ word: 'molestar', meaning: 'мешать' },
+			{ word: 'montar', meaning: 'устроить' },
+			{ word: 'morir', meaning: 'умирать' },
+			{ word: 'nacer', meaning: 'рождаться' },
+			{ word: 'nadar', meaning: 'плавать (человек, животное)' },
+			{ word: 'navegar', meaning: 'плавать (на корабле, корабль сам по себе)' },
+			{ word: 'necesitar', meaning: 'нуждаться, быть нужным' },
+			{ word: 'negarse (a algo)', meaning: 'отказываться (от ч/л)' },
+			{ word: 'nevar', meaning: 'снежить' },
+			{ word: 'nieva', meaning: 'идет снег' },
+			{ word: 'no tener inconveniente', meaning: 'не иметь ничего против' },
+			{ word: 'nombrar', meaning: 'называть, назначать (на должность)' },
+			{ word: 'notar', meaning: 'заметить' },
+			{ word: 'obtener', meaning: 'получать (завладеть)' },
+			{ word: 'oigo', meaning: 'слышу' },
+			{ word: 'ordenar', meaning: 'приводить в порядок, приказывать' },
+			{ word: 'organizar', meaning: 'организовать' },
+			{ word: 'parar', meaning: 'останавливаться' },
+			{ word: 'parecer', meaning: 'казаться, быть похожим на' },
+			{ word: 'participar', meaning: 'участвовать' },
+			{ word: 'pasar', meaning: 'проводить, проходить, происходить' },
+			{ word: 'pasear', meaning: 'гулять, выгуливать' },
+			{ word: 'pegar', meaning: 'приклеивать' },
+			{ word: 'pensar (em algo)', meaning: 'думать (о ч/л)' },
+			{ word: 'pensar (en algo)', meaning: 'думать (о ч/л)' },
+			{ word: 'perder', meaning: 'терять' },
+			{ word: 'permitir', meaning: 'разрешать' },
+			{ word: 'pertenecer', meaning: 'принадлежать' },
+			{ word: 'pesar', meaning: 'весить' },
+			{ word: 'pescar', meaning: 'ловить рыбу' },
+			{ word: 'pintar', meaning: 'красить' },
+			{ word: 'planchar', meaning: 'гладить' },
+			{ word: 'planear', meaning: 'планировать' },
+			{ word: 'poder', meaning: 'мочь' },
+			{ word: 'ponerse', meaning: 'надевать' },
+			{ word: 'ponerse al teléfono', meaning: 'подойти к телефону' },
+			{ word: 'ponerse eufórico', meaning: 'быть (прийти в состояние) в экстазе' },
+			{ word: 'pongo', meaning: 'кладу' },
+			{ word: 'poseer', meaning: 'владеть' },
+			{ word: 'preferir', meaning: 'предпочитать' },
+			{ word: 'preocupar', meaning: 'беспокоить' },
+			{ word: 'preocuparse', meaning: 'беспокоиться' },
+			{ word: 'preparar', meaning: 'готовить' },
+			{ word: 'preparar', meaning: 'готовить' },
+			{ word: 'presentar', meaning: 'представлять' },
+			{ word: 'probar', meaning: 'пробовать (на вкус)' },
+			{ word: 'probarse', meaning: 'примерять (одежду, обувь)' },
+			{ word: 'producir', meaning: 'производить' },
+			{ word: 'proponer', meaning: 'предлагать' },
+			{ word: 'protestar', meaning: 'протестовать' },
+			{ word: 'publicar', meaning: 'опубликовать' },
+			{ word: 'quedarse', meaning: 'оставаться' },
+			{ word: 'quejarse de', meaning: 'жаловаться на' },
+			{ word: 'quemarse', meaning: 'подгореть' },
+			{ word: 'quería', meaning: '(я, он) хотел' },
+			{ word: 'quitar el polvo', meaning: 'вытереть пыль' },
+			{ word: 'quitarse', meaning: 'снимать (одежду)' },
+			{ word: 'realizar', meaning: 'осуществлять' },
+			{ word: 'realizar estudios', meaning: 'получать образование' },
+			{ word: 'recibir', meaning: 'принимать' },
+			{ word: 'recoger', meaning: 'забирать, прибирать' },
+			{ word: 'recojer a los niños d(el) colegio', meaning: 'забирать детей из школы' },
+			{ word: 'recojer las fotos en tienda', meaning: 'забрать фотки из магазина' },
+			{ word: 'recomendar', meaning: 'советовать' },
+			{ word: 'recordar', meaning: 'помнить, впоминать' },
+			{ word: 'recorrer', meaning: 'обходить, объезжать, обегать (в т.ч. взглядом), пересекать (страну, горы)' },
+			{ word: 'regalar', meaning: 'дарить' },
+			{ word: 'reírse', meaning: 'смеяться' },
+			{ word: 'renunciar', meaning: 'отказываться (уволиться, сложить полномочия)' },
+			{ word: 'repartir', meaning: 'распределять' },
+			{ word: 'reservar', meaning: '(за)резервировать (в одно слово)' },
+			{ word: 'reunir', meaning: 'объединять' },
+			{ word: 'reunirse', meaning: 'собираться' },
+			{ word: 'sacar', meaning: 'доставать, выгуливать' },
+			{ word: 'sacar al perro', meaning: 'выгуливать собаку' },
+			{ word: 'salir', meaning: 'выходить' },
+			{ word: 'salir', meaning: 'выйти' },
+			{ word: 'salir de viaje', meaning: 'ехать путешествовать' },
+			{ word: 'salvar', meaning: 'спасать' },
+			{ word: 'sé', meaning: 'я знаю' },
+			{ word: 'sé', meaning: 'знаю' },
+			{ word: 'se convierte', meaning: 'превращается' },
+			{ word: 'seguir', meaning: 'продолжать, следовать' },
+			{ word: 'sentarse', meaning: 'садиться' },
+			{ word: 'sentir', meaning: 'чувствовать, сожалеть' },
+			{ word: 'ser', meaning: 'быть' },
+			{ word: 'servir', meaning: 'служить' },
+			{ word: 'situar', meaning: 'расположить' },
+			{ word: 'soler', meaning: 'иметь обыкновение' },
+			{ word: 'sollozar', meaning: 'всхлипывать' },
+			{ word: 'sonreír', meaning: 'улыбаться' },
+			{ word: 'soportar', meaning: 'выносить' },
+			{ word: 'subir', meaning: 'подниматься, садиться в транспортное средство' },
+			{ word: 'suceder', meaning: 'случаться' },
+			{ word: 'sufrir', meaning: 'страдать' },
+			{ word: 'sumar', meaning: 'прибавлять' },
+			{ word: 'superar', meaning: 'превосходить' },
+			{ word: 'suspender', meaning: 'отменять' },
+			{ word: 'suspirar', meaning: 'вздыхать' },
+			{ word: 'tardar (en)', meaning: 'тратить время на' },
+			{ word: 'tener', meaning: 'иметь' },
+			{ word: 'tener éxito', meaning: 'добиться успеха' },
+			{ word: 'tener lugar', meaning: 'происходить (иметь место быть)' },
+			{ word: 'tener miedo', meaning: 'бояться' },
+			{ word: 'tirar', meaning: 'выбрасывать' },
+			{ word: 'tiritar', meaning: 'дрожать (от холода)' },
+			{ word: 'tocar', meaning: 'трогать, играть (на музыкальном инструменте)' },
+			{ word: 'tomar', meaning: 'брать, есть, пить' },
+			{ word: 'tomar', meaning: 'брать, пить, кушать ч/л' },
+			{ word: 'tomar té', meaning: 'пить чай' },
+			{ word: 'trabajar', meaning: 'работать' },
+			{ word: 'trabajar', meaning: 'работать' },
+			{ word: 'trabajar', meaning: 'работать' },
+			{ word: 'traducir', meaning: 'переводить' },
+			{ word: 'trasladarse', meaning: 'переехать' },
+			{ word: 'usar', meaning: 'использовать' },
+			{ word: 'utilizar', meaning: 'использовать' },
+			{ word: 'vaciar', meaning: 'опустошать' },
+			{ word: 'valorar', meaning: 'ценить' },
+			{ word: 'vengo', meaning: 'прихожу' },
+			{ word: 'venir', meaning: 'приходить' },
+			{ word: 'venir', meaning: 'приходить' },
+			{ word: 'ver', meaning: 'видеть' },
+			{ word: 'ver', meaning: 'видеть' },
+			{ word: 'ver (la) televisión', meaning: 'смотреть телевизор' },
+			{ word: 'verse', meaning: 'видеться' },
+			{ word: 'vestir', meaning: 'носить одежду' },
+			{ word: 'vestirse', meaning: 'одеваться' },
+			{ word: 'vestirse', meaning: 'одеваться' },
+			{ word: 'vivir', meaning: 'жить' },
+			{ word: 'vivir', meaning: 'жить' },
+			{ word: 'volar', meaning: 'летать' },
+			{ word: 'volver', meaning: 'возвращаться' }
+
+
+        ]
+
+        var when = [
+            '',
+            'утром',
+            'днём',
+            'в полдень',
+            'вечером',
+            'ночью',
+            'в полночь',
+            'каждый день',
+            'сегодня',
+            'сегодня утром',
+            'сегодня днём',
+            'сегодня в полдень',
+            'сегодня вечером',
+            'сегодня ночью',
+            'сегодня в полночь',
+
+            // 'позавчера',
+            // 'позавчера утром',
+            // 'позавчера днём',
+            // 'позавчера в полдень',
+            // 'позавчера вечером',
+            // 'позавчера ночью',
+            // 'позавчера в полночь',
+
+            // 'вчера',
+            // 'вчера утром',
+            // 'вчера днём',
+            // 'вчера в полдень',
+            // 'вчера вечером',
+            // 'вчера ночью',
+            // 'вчера в полночь',
+
+            // 'завтра',
+            // 'завтра утром',
+            // 'завтра днём',
+            // 'завтра в полдень',
+            // 'завтра вечером',
+            // 'завтра ночью',
+            // 'завтра в полночь',
+
+            // 'послезавтра',
+            // 'послезавтра утром',
+            // 'послезавтра днём',
+            // 'послезавтра в полдень',
+            // 'послезавтра вечером',
+            // 'послезавтра ночью',
+            // 'послезавтра в полночь',
+
+            // 'только что',
+            // '5 минут назад',
+            // '10 минут назад',
+            // '15 минут назад',
+            // '20 минут назад',
+            // '40 минут назад',
+            // 'полчаса назад',
+            // '1 час назад',
+            // '2 часа назад',
+            // '3 часа назад',
+            // '4 часа назад',
+            // '12 часов назад',
+            // 'через 5 минут',
+            // 'через 10 минут',
+            // 'через 15 минут',
+            // 'через 20 минут',
+            // 'через 40 минут',
+            // 'через полчаса ',
+            // 'через 1 час',
+            // 'через 2 часа ',
+            // 'через 3 часа ',
+            // 'через 4 часа ',
+            // 'через 12 часов',
+
+            'после уроков',
+            'после урока',
+            'после занятий',
+            'после лекций',
+            'после лекции',
+            'после работы',
+            'до уроков',
+            'до урока',
+            'до занятий',
+            'до лекций',
+            'до лекции',
+            'до работы',
+        ]
+
+        var where = [
+            'в кафе',
+            'в баре',
+            'в Германии',
+            'в России',
+            'в Польше',
+            'в поле',
+            'за городом',
+            'в автобусе',
+            'в баре',
+            'в кафе',
+            'в поле',
+            'в доме',
+            'на даче',
+            'в центре города',
+            'в кино(театре)',
+            'в городе',
+            'на кухне',
+            'в машине',
+            'на концерте',
+            'на фестивале',
+            'на станции',
+            'на вокзале',
+            'в больнице',
+            'в гостинице',
+            'в Англии',
+            'на рынке',
+            'в метро',
+            'в Мексике',
+            'в музее',
+            'в Норвегии',
+            'на работе',
+            'в офисе',
+            'в Польше',
+            'в России',
+            'в супермаркете',
+            'в театре',
+            'в Украине',
+            'в университете',
+            'в Голландии',
+            'в США',
+            'в Испании',
+            'в Дании',
+            'в Германии',
+            'на кровати',
+        ]
+
+
+        function pick_random_item(items) {
+            var index = Math.floor(Math.random() * items.length);
+            return items[index];
+        }
+
+        function generate() {
+            $('#showhint').prop('checked', false);
+
+            var v = verbishes;
+
+            for (var counter = 0; counter <= 0; ++counter) {
+                var clause = [
+                    '',
+					pronouns[0],
+                    pick_random_item(v),
+                ]
+
+                var res = clause.reduce((prev, cur) => prev += ' ' + wrap_with_span(cur));// + '<br/>';
+
+                $('.clause').html(res);
+            }
+        }
+
+        function wrap_with_span(text) {
+			let markup = '<span class=\'clause-part\'>' + text + '</span>';
+			if (typeof text === "object") {
+				markup = '<span class=\'clause-part\'>' + text.meaning + '<br/><span class=\'word-hint word-hint--collapsed\'>' + text.word + '</span></span>';
+			}
+			
+			return markup;
+        }
+
+        function copy_wrong() {
+            var clause = $('.clause').html();
+            if (clause) {
+                var $container = $('.wrong-container');
+                $container.show();
+                var $ul = $('ul', $container);
+                if ($('li:last', $ul).html() != clause) {
+                    $ul.append('<li>' + clause + '</li>');
+                }
+            }
+        }
+
+        function show_hint() {
+            $('.clause-part', $('.clause')).toggleClass('clause-part-hint');
+            $('.word-hint').toggleClass('word-hint--collapsed');
+        }
+
+        $('.btn-gen').click(generate);
+        $('.btn-wrong').click(copy_wrong);
+        $('#showhint').change(show_hint);
+
+    </script>
+</body>
+
+</html>
